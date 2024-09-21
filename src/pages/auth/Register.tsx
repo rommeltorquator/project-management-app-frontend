@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../api/axiosInstance';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Register: React.FC = () => {
       setError('');
 
       try {
-        const response = await axios.post('http://localhost:5100/api/auth/register', formData);
+        const response = await axiosInstance.post(`/auth/register`, formData);
         console.log(response.data);
         navigate('/login');
       } catch (err) {

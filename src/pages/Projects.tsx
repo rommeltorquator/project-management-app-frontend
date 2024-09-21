@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
+import axiosInstance from '../api/axiosInstance';
 
 interface Project {
   _id: string;
@@ -19,49 +19,11 @@ const Projects: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const handleCreateProject = () => {
-    navigate('/projects/new');
-  };
-
-  const handleDeleteProject = async (projectId: string) => {
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      try {
-        await axios.delete(`http://localhost:5100/api/projects/${projectId}`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`, // Assuming a Bearer token
-          },
-        });
-        setProjects((prevProjects) => prevProjects.filter((p) => p._id !== projectId));
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message || 'Failed to delete project');
-        } else {
-          setError('Failed to delete project');
-        }
-      }
-    }
-  };
-
   useEffect(() => {
-    const fetchProjects = async () => {
-      console.log("Projects useEffect");
+    const fetchProjects = async () => {      
       setLoading(true); // Ensure you set loading state before making the request
-      try {
-        // Retrieve the token from the cookie
-        const token = Cookies.get('token');
-    
-        if (!token) {
-          setError('Authentication token not found. Please log in.');
-          return;
-        }
-    
-        // Make the GET request with the Authorization header
-        const response = await axios.get('http://localhost:5100/api/projects/', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Assuming a Bearer token
-          },
-        });
-    
+      try {  
+        const response = await axiosInstance.get('/projects/'); // Relative path
         setProjects(response.data); // Update your state with the fetched projects
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -77,6 +39,25 @@ const Projects: React.FC = () => {
     fetchProjects();
   }, []);
 
+  const handleCreateProject = () => {
+    navigate('/projects/new');
+  };
+
+  const handleDeleteProject = async (projectId: string) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      try {
+        await axiosInstance.delete(`/projects/${projectId}`);
+        setProjects((prevProjects) => prevProjects.filter((p) => p._id !== projectId));
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Failed to delete project');
+        } else {
+          setError('Failed to delete project');
+        }
+      }
+    }
+  };
+
   if (loading) {
     return <p>Loading projects...</p>;
   }
@@ -86,13 +67,16 @@ const Projects: React.FC = () => {
   }
 
   if (projects.length === 0) {
-    return <p>No projects found.</p>;
+    return <div>
+      <button onClick={handleCreateProject}>Create New Project</button>
+      <p>No projects found.</p>
+    </div>
   }
 
   return (
     <div>
       <p>awawawawaw</p>
-      <h2>Your Projects</h2>
+      <h2>Your Projectsss</h2>
       <button onClick={handleCreateProject}>Create New Project</button>
       <ul>
         {projects.map((project) => (

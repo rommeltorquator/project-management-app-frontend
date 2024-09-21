@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import axiosInstance from '../api/axiosInstance';
 
 interface Project {
   _id: string;
@@ -26,11 +26,7 @@ const ProjectDetail: React.FC = () => {
   const handleDeleteProject = async () => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
-        await axios.delete(`http://localhost:5100/api/projects/${id}`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`, // Assuming a Bearer token
-          },
-        });
+        await axiosInstance.delete(`/projects/${id}`);
         navigate('/projects');
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -45,19 +41,7 @@ const ProjectDetail: React.FC = () => {
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const token = Cookies.get('token');
-
-        if (!token) {
-          setError('Authentication token not found. Please log in.');
-          return;
-        }
-
-        const response = await axios.get(`http://localhost:5100/api/projects/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Assuming a Bearer token
-          },
-        });
-
+        const response = await axiosInstance.get(`/projects/${id}`);
         setProject(response.data);
       } catch (err) {
         if (axios.isAxiosError(err)) {

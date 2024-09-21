@@ -2,6 +2,7 @@ import React, { useState, useCallback, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import axiosInstance from '../../api/axiosInstance';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const Login = () => {
       setError('');
 
       try {
-        const response = await axios.post('http://localhost:5100/api/auth/login', formData);
+        const response = await axiosInstance.post(`/auth/login`, formData);
         const { token } = response.data;
         setAuthData({ token });
         navigate('/');

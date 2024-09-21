@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 interface ProjectFormData {
   title: string;
@@ -31,19 +31,7 @@ const ProjectForm: React.FC = () => {
       // Fetch existing project data
       const fetchProject = async () => {
         try {
-          const token = Cookies.get('token');
-    
-          if (!token) {
-            setError('Authentication token not found. Please log in.');
-            return;
-          }
-
-          const response = await axios.get(`http://localhost:5100/api/projects/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`, // Assuming a Bearer token
-            },
-          });
-
+          const response = await axiosInstance.get(`/projects/${id}`);
           setFormData(response.data);
         } catch (err) {
           if (axios.isAxiosError(err)) {
@@ -70,19 +58,10 @@ const ProjectForm: React.FC = () => {
 
     try {
       if (isEditMode) {
-        // Update existing project
-        await axios.put(`http://localhost:5100/api/projects/${id}`, formData, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`, // Assuming a Bearer token
-          },
-        });
+        await axiosInstance.put(`/projects/${id}`);
       } else {
         // Create new project
-        await axios.post('http://localhost:5100/api/projects/', formData, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`, // Assuming a Bearer token
-          },
-        });
+        await axiosInstance.post(`/projects/`, formData);
       }
       navigate('/projects');
     } catch (err) {
