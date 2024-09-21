@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ProjectDetail from '../pages/ProjectDetail';
 
 const Layout = lazy(() => import('../pages/Layout'));
 const Home = lazy(() => import('../pages/Home'));
@@ -9,47 +8,57 @@ const Login = lazy(() => import('../pages/auth/Login'));
 const Register = lazy(() => import('../pages/auth/Register'));
 const Projects = lazy(() => import('../pages/Projects'));
 const ProtectedRoute = lazy(() => import('../components/ProtectedRoute'));
+const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
+const ProjectForm = lazy(() => import('../pages/ProjectForm'));
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },      
+      // Public Routes
       {
         path: 'login',
-        element: <Login />
+        element: <Login />,
       },
       {
         path: 'register',
-        element: <Register />
+        element: <Register />,
       },
+      // Protected Routes
       {
-        path: 'not-found',
-        element: <NotFound />
+        element: <ProtectedRoute><></></ProtectedRoute>,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: 'projects',
+            element: <Projects />,
+          },
+          {
+            path: 'projects/new',
+            element: <ProjectForm />, // Route for creating a new project
+          },
+          {
+            path: 'projects/:id',
+            element: <ProjectDetail />,
+          },
+          {
+            path: 'projects/:id/edit',
+            element: <ProjectForm />, // Route for editing a project
+          },
+        ],
       },
+      // Not Found Route
       {
-        path: 'projects',
-        element: (
-          <ProtectedRoute>
-            <Projects />
-          </ProtectedRoute>
-        )
+        path: '*',
+        element: <NotFound />,
       },
-      {
-        path: 'projects/:id',
-        element: (
-          <ProtectedRoute>
-            <ProjectDetail />
-          </ProtectedRoute>
-        ),
-      }
-    ]
-  }
-])
+    ],
+  },
+]);
 
 const AppRoutes = () => {
   return (
