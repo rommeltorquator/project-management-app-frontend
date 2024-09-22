@@ -25,9 +25,6 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Token is invalid or expired
-      // Clear token and redirect to login
-      // const navigate = useNavigate();
       Cookies.remove('token')
       // navigate('/');
       window.location.href = '/login';
