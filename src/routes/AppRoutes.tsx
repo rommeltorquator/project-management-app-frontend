@@ -1,5 +1,6 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import PublicRoute from '../components/PublicRoute';
 
 const Layout = lazy(() => import('../pages/Layout'));
 const Home = lazy(() => import('../pages/Home'));
@@ -18,12 +19,29 @@ const router = createBrowserRouter([
     children: [
       // Public Routes
       {
-        path: 'login',
-        element: <Login />,
-      },
-      {
-        path: 'register',
-        element: <Register />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <PublicRoute />
+          </Suspense>
+        ),
+        children: [
+          {
+            path: 'login',
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Login />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'register',
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Register />
+              </Suspense>
+            ),
+          },
+        ],
       },
       // Protected Routes
       {
@@ -31,30 +49,54 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Home />,
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Home />
+              </Suspense>
+            ),
           },
           {
             path: 'projects',
-            element: <Projects />,
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <Projects />
+              </Suspense>
+            ),
           },
           {
             path: 'projects/new',
-            element: <ProjectForm />, // Route for creating a new project
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProjectForm />
+              </Suspense>
+            ),
           },
           {
             path: 'projects/:id',
-            element: <ProjectDetail />,
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProjectDetail />
+              </Suspense>
+            ),
           },
           {
             path: 'projects/:id/edit',
-            element: <ProjectForm />, // Route for editing a project
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <ProjectForm />
+              </Suspense>
+            ),
           },
         ],
       },
       // Not Found Route
       {
         path: '*',
-        element: <NotFound />,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <NotFound />
+          </Suspense>
+        ),
       },
     ],
   },

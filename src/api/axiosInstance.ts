@@ -1,12 +1,10 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
-
-const token = Cookies.get('token');
+// import { useNavigate } from 'react-router-dom';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL, // Accessing environment variable
   headers: {
-    'Authorization': `Bearer ${token}`, // Get token from local storage or other source
     'Content-Type': 'application/json',
   },
 });
@@ -20,6 +18,22 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Add a response interceptor to handle 401 errors
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      // Token is invalid or expired
+      // Clear token and redirect to login
+      // const navigate = useNavigate();
+      Cookies.remove('token')
+      // navigate('/');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default axiosInstance;

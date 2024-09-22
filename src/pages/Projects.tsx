@@ -75,7 +75,6 @@ const Projects: React.FC = () => {
 
   return (
     <div>
-      <p>awawawawaw</p>
       <h2>Your Projectsss</h2>
       <button onClick={handleCreateProject}>Create New Project</button>
       <ul>
