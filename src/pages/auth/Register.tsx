@@ -2,6 +2,15 @@ import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axiosInstance';
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  CircularProgress,
+  Alert
+} from "@mui/material"
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -49,38 +58,66 @@ const Register: React.FC = () => {
   );
 
   return (
-    <div>
-      <h2>Register</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          placeholder="Username"
-          required
-        />
-        <input
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          type="email"
-          required
-        />
-        <input
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          type="password"
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
-    </div>
+    <Container maxWidth="xs">
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
+            {error}
+          </Alert>
+        )}
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <TextField
+            required
+            fullWidth
+            label="Username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <TextField
+            required
+            fullWidth
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <TextField
+            required
+            fullWidth
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            sx={{ mt: 2, mb: 2 }}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Register'}
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
