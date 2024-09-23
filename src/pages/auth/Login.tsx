@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import axiosInstance from '../../api/axiosInstance';
+import {Container, Box, Typography, TextField, Button, CircularProgress, Alert } from "@mui/material"
 
 const Login = () => {
   const navigate = useNavigate();
@@ -51,31 +52,54 @@ const Login = () => {
   );
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-          type="email"
-          required
-        />
-        <input
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-          type="password"
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-    </div>
+    <Container>
+      <Box sx={{
+        marginTop: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'}}>
+        <Typography component="h1" variant="h5">
+          Login
+        </Typography>
+        {error && (
+          <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
+            {error}
+          </Alert>
+        )}
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3}}>
+          <TextField
+            required
+            fullWidth
+            label="Email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <TextField
+            required
+            fullWidth
+            label="Password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            sx={{ mt: 2, mb: 2 }}
+          >
+            {loading ? <CircularProgress size={24} /> : 'Login'}
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
