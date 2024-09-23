@@ -35,6 +35,7 @@ const Navbar: React.FC = () => {
                     sx={{
                       textTransform: 'none',
                       fontWeight: isActive ? 'bold' : 'normal',
+                      color: isActive ? 'secondary.main' : '#FFFFFF',
                     }}
                   >
                     Login
@@ -48,6 +49,7 @@ const Navbar: React.FC = () => {
                     sx={{
                       textTransform: 'none',
                       fontWeight: isActive ? 'bold' : 'normal',
+                      color: isActive ? 'secondary.main' : '#FFFFFF',
                     }}
                   >
                     Register
@@ -64,6 +66,7 @@ const Navbar: React.FC = () => {
                     sx={{
                       textTransform: 'none',
                       fontWeight: isActive ? 'bold' : 'normal',
+                      color: isActive ? 'secondary.main' : '#FFFFFF',
                     }}
                   >
                     Home
@@ -77,6 +80,7 @@ const Navbar: React.FC = () => {
                     sx={{
                       textTransform: 'none',
                       fontWeight: isActive ? 'bold' : 'normal',
+                      color: isActive ? 'secondary.main' : '#FFFFFF',
                     }}
                   >
                     Projects
@@ -86,7 +90,7 @@ const Navbar: React.FC = () => {
               <Button
                 color="inherit"
                 onClick={handleLogout}
-                sx={{ textTransform: 'none' }}
+                sx={{ textTransform: 'none', color: '#FFFFFF' }} // Always white
               >
                 Logout
               </Button>
