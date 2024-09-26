@@ -1,7 +1,21 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
+
+// import Container from '@mui/material/Container';
+// import Box from '@mui/material/Box';
+// import Typography from '@mui/material/Typography';
+// import Button from '@mui/material/Button';
+// import CircularProgress from '@mui/material/CircularProgress';
+// import Alert from '@mui/material/Alert';
+// import Grid from '@mui/material/Grid';
+// import Card from '@mui/material/Card';
+// import CardContent from '@mui/material/CardContent';
+// import CardActions from '@mui/material/CardActions';
+// import Link from '@mui/material/Link';
+
+import {Container, Box, Typography, Button, CircularProgress, Alert, Grid2, Card, CardContent, CardActions, Link} from "@mui/material"
 
 interface Project {
   _id: string;
@@ -12,7 +26,11 @@ interface Project {
   priority?: string;
 }
 
-const Projects: React.FC = () => {
+interface ProjectsProps {
+  projects: Project[];
+}
+
+const Projects: React.FC<ProjectsProps> = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -58,37 +76,78 @@ const Projects: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <p>Loading projects...</p>;
-  }
-
-  if (error) {
-    return <p style={{ color: 'red' }}>{error}</p>;
-  }
-
-  if (projects.length === 0) {
-    return <div>
-      <button onClick={handleCreateProject}>Create New Project</button>
-      <p>No projects found.</p>
-    </div>
-  }
-
   return (
-    <div>
-      <h2>Your Projectsss</h2>
-      <button onClick={handleCreateProject}>Create New Project</button>
-      <ul>
-        {projects.map((project) => (
-          <li key={project._id}>
-            <h3><Link to={`/projects/${project._id}`}>{project.title}</Link></h3>
-            {project.description && <p>{project.description}</p>}
-            {/* Display other project details as needed */}
-            <button onClick={() => navigate(`/projects/${project._id}/edit`)}>Edit</button>
-            <button onClick={() => handleDeleteProject(project._id)} style={{ color: 'red' }}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Container maxWidth="md">
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Your Projects
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateProject}
+          sx={{ mb: 2 }}
+        >
+          Create New Project
+        </Button>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Alert severity="error">{error}</Alert>
+        ) : projects.length === 0 ? (
+          <Typography variant="body1">No projects found.</Typography>
+        ) : (
+          <Grid2 container spacing={2}>
+            {projects.map((project) => (
+              // <Grid2 item xs={12} sm={6} md={4} key={project._id}>
+              <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={project._id}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" component="div">
+                      <Link
+                        component={RouterLink}
+                        to={`/projects/${project._id}`}
+                        underline="hover"
+                        color="inherit"
+                      >
+                        {project.title}
+                      </Link>
+                    </Typography>
+                    {project.description && (
+                      <Typography variant="body2" color="text.secondary">
+                        {project.description}
+                      </Typography>
+                    )}
+                    {project.priority && (
+                      <Typography variant="body2">
+                        Priority: {project.priority}
+                      </Typography>
+                    )}
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      onClick={() => navigate(`/projects/${project._id}/edit`)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="small"
+                      color="error"
+                      onClick={() => handleDeleteProject(project._id)}
+                    >
+                      Delete
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid2>
+            ))}
+          </Grid2>
+        )}
+      </Box>
+    </Container>
   );
 };
 
