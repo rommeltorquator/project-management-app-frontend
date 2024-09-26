@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
       }}
     >
       <Typography variant="body2" color="textSecondary" align="center">
-        © {new Date().getFullYear()} Your Company. All rights reserved.
+        © {new Date().getFullYear()} Rommel Inc. All rights reserved. Let's go!
       </Typography>
     </Box>
   );
