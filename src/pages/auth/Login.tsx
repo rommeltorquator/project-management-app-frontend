@@ -37,7 +37,7 @@ const Login = () => {
         const response = await axiosInstance.post(`/auth/login`, formData);
         const { token } = response.data;
         setAuthData({ token });
-        navigate('/');
+        navigate('/projects');
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || 'Login failed');

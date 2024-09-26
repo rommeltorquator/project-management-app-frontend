@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
+import {Container, Box, Typography, Button, CircularProgress, Alert} from "@mui/material"
 
 interface Project {
   _id: string;
