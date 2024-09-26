@@ -64,27 +64,69 @@ const ProjectDetail: React.FC = () => {
   }, [id]);
 
   if (loading) {
-    return <p>Loading project details...</p>;
+    return (
+      <Container maxWidth="sm">
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
   }
 
   if (error) {
-    return <p style={{ color: 'red' }}>{error}</p>;
+    return (
+      <Container maxWidth="sm">
+        <Alert severity="error" sx={{ mt: 4 }}>
+          {error}
+        </Alert>
+      </Container>
+    );
   }
 
   if (!project) {
-    return <p>Project not found.</p>;
+    return (
+      <Container maxWidth="sm">
+        <Typography variant="h6" sx={{ mt: 4 }}>
+          Project not found.
+        </Typography>
+      </Container>
+    );
   }
 
   return (
-    <div>
-      <h2>{project.title}</h2>
-      {project.description && <p>{project.description}</p>}
-      {project.startDate && <p>Start Date: {new Date(project.startDate).toLocaleDateString()}</p>}
-      {project.endDate && <p>End Date: {new Date(project.endDate).toLocaleDateString()}</p>}
-      {project.priority && <p>Priority: {project.priority}</p>}
-      <button onClick={handleEditProject}>Edit Project</button>
-      <button onClick={handleDeleteProject} style={{ color: 'red' }}>Delete Project</button>
-    </div>
+    <Container maxWidth="sm">
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          {project.title}
+        </Typography>
+        {project.description && (
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            {project.description}
+          </Typography>
+        )}
+        {project.startDate && (
+          <Typography variant="body2">
+            Start Date: {new Date(project.startDate).toLocaleDateString()}
+          </Typography>
+        )}
+        {project.endDate && (
+          <Typography variant="body2">
+            End Date: {new Date(project.endDate).toLocaleDateString()}
+          </Typography>
+        )}
+        {project.priority && (
+          <Typography variant="body2">Priority: {project.priority}</Typography>
+        )}
+        <Box sx={{ mt: 2 }}>
+          <Button variant="contained" onClick={handleEditProject} sx={{ mr: 2 }}>
+            Edit Project
+          </Button>
+          <Button variant="outlined" color="error" onClick={handleDeleteProject}>
+            Delete Project
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
