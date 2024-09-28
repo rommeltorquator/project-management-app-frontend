@@ -3,18 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axiosInstance from '../api/axiosInstance';
 
-// import Container from '@mui/material/Container';
-// import Box from '@mui/material/Box';
-// import Typography from '@mui/material/Typography';
-// import Button from '@mui/material/Button';
-// import CircularProgress from '@mui/material/CircularProgress';
-// import Alert from '@mui/material/Alert';
-// import Grid from '@mui/material/Grid';
-// import Card from '@mui/material/Card';
-// import CardContent from '@mui/material/CardContent';
-// import CardActions from '@mui/material/CardActions';
-// import Link from '@mui/material/Link';
-
 import {Container, Box, Typography, Button, CircularProgress, Alert, Grid2, Card, CardContent, CardActions, Link} from "@mui/material"
 
 interface Project {
@@ -26,11 +14,7 @@ interface Project {
   priority?: string;
 }
 
-interface ProjectsProps {
-  projects: Project[];
-}
-
-const Projects: React.FC<ProjectsProps> = () => {
+const Projects: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');

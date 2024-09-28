@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
-import {Container, Box, Typography, Button, CircularProgress, Alert} from "@mui/material"
+import {Container, Box, Typography, Button, CircularProgress, Alert, List, ListItem, ListItemText, IconButton } from "@mui/material"
+
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Project {
   _id: string;
@@ -11,6 +14,17 @@ interface Project {
   startDate?: string;
   endDate?: string;
   priority?: string;
+  tasks?: Task[];
+}
+
+interface Task {
+  _id: string;
+  projectId: string;
+  title: string;
+  description?: string;
+  status: 'To Do' | 'In Progress' | 'Done';
+  priority: 'Low' | 'Medium' | 'High';
+  dueDate?: string;
 }
 
 const ProjectDetail: React.FC = () => {
@@ -39,11 +53,39 @@ const ProjectDetail: React.FC = () => {
     }
   };
 
+  const handleDeleteTask = async (taskId: string) => {
+    if (window.confirm('Are you sure you want to delete this task?')) {
+      try {
+        await axiosInstance.delete(`/tasks/${taskId}`);
+        setProject((prevProject) => {
+          if (!prevProject) return prevProject;
+          return {
+            ...prevProject,
+            tasks: prevProject.tasks?.filter((task) => task._id !== taskId),
+          };
+        });
+      } catch (err) {
+        if (axios.isAxiosError(err)) {
+          setError(err.response?.data?.message || 'Failed to delete task');
+        } else {
+          setError('Failed to delete task');
+        }
+      }
+    }
+  };
+  
+
   useEffect(() => {
     const fetchProject = async () => {
       try {
         const response = await axiosInstance.get(`/projects/${id}`);
-        setProject(response.data);
+        const projectData = response.data;
+
+        // Fetch tasks for the project
+        const tasksResponse = await axiosInstance.get(`/tasks/project/${id}`);
+        projectData.tasks = tasksResponse.data;
+
+        setProject(projectData);
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(err.response?.data?.message || 'Failed to fetch projects');
@@ -125,6 +167,51 @@ const ProjectDetail: React.FC = () => {
             Delete Project
           </Button>
         </Box>
+        {/* Display Tasks */}
+        {project.tasks && (
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h5" component="h2" gutterBottom>
+              Tasks
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate(`/projects/${id}/tasks/new`)}
+              sx={{ mb: 2 }}
+            >
+              Add Task
+            </Button>
+            {project.tasks.length === 0 ? (
+              <Typography variant="body1">No tasks found.</Typography>
+            ) : (
+              <List>
+                {project.tasks.map((task) => (
+                  <ListItem key={task._id} disableGutters>
+                    <ListItemText
+                      primary={task.title}
+                      secondary={`Status: ${task.status}`}
+                    />
+                    <IconButton
+                      edge="end"
+                      onClick={() =>
+                        navigate(`/projects/${id}/tasks/${task._id}/edit`)
+                      }
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      color="error"
+                      onClick={() => handleDeleteTask(task._id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItem>
+                ))}
+              </List>
+            )}
+          </Box>
+        )}
       </Box>
     </Container>
   );
