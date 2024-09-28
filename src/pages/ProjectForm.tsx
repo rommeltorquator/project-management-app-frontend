@@ -74,7 +74,7 @@ const ProjectForm: React.FC = () => {
 
     try {
       if (isEditMode) {
-        await axiosInstance.put(`/projects/${id}`);
+        await axiosInstance.put(`/projects/${id}`, formData);
       } else {
         // Create new project
         await axiosInstance.post(`/projects/`, formData);
