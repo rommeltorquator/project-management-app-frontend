@@ -14,12 +14,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
-
+import { formatDateToInput } from '../utils/dateUtils';
 
 interface TaskFormData {
   title: string;
   description?: string;
-  status: 'To Do' | 'In Progress' | 'Done';
+  status: 'To Do' | 'In Progress' | 'Completed';
   dueDate?: string;
 }
 
@@ -38,13 +38,12 @@ const TaskForm: React.FC  = () => {
   const isEditMode = Boolean(taskId);
 
   useEffect(() => {
-    console.log(id, taskId)
     if (isEditMode) {
       const fetchTask = async () => {
         setLoading(true);
         try {
           const response = await axiosInstance.get(`/tasks/${taskId}`);
-          setFormData(response.data);
+          setFormData({ ...response.data, dueDate: formatDateToInput(response.data.dueDate) });
         } catch (err) {
           if (axios.isAxiosError(err)) {
             setError(err.response?.data?.message || 'Failed to fetch task data');
@@ -74,18 +73,15 @@ const TaskForm: React.FC  = () => {
     setError('');
 
     try {
-      if (isEditMode) {
-        await axiosInstance.put(`/tasks/${taskId}`, formData);
-      } else {
-        console.log("This is for create new task", { ...formData, project: id })
-        // await axiosInstance.post(`/tasks`, { ...formData, project: id });
-        await axiosInstance.post(`/tasks`, {
-          "project": id,
-          "title": formData.title,
-          "description": formData.description,
-          "dueDate": formData.dueDate,
-          "status": formData.status
+      if (isEditMode) {        
+        await axiosInstance.put(`/tasks/${taskId}`, {
+          description: formData.description,
+          dueDate: formData.dueDate,
+          status: formData.status,
+          title: formData.title
         });
+      } else {
+        await axiosInstance.post(`/tasks`, { ...formData, project: id });
       }
       navigate(`/projects/${id}`);
     } catch (err) {
@@ -154,7 +150,7 @@ const TaskForm: React.FC  = () => {
               >
                 <MenuItem value="To Do">To Do</MenuItem>
                 <MenuItem value="In Progress">In Progress</MenuItem>
-                <MenuItem value="Done">Done</MenuItem>
+                <MenuItem value="Completed">Completed</MenuItem>
               </Select>
             </FormControl>
             <TextField
@@ -165,9 +161,9 @@ const TaskForm: React.FC  = () => {
               value={formData.dueDate}
               onChange={handleChange}
               margin="normal"
-              InputLabelProps={{
+              slotProps={{inputLabel: {
                 shrink: true,
-              }}
+              }}}
             />
             <Button
               type="submit"

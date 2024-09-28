@@ -11,9 +11,7 @@ const Projects = lazy(() => import('../pages/Projects'));
 const ProtectedRoute = lazy(() => import('../components/ProtectedRoute'));
 const ProjectDetail = lazy(() => import('../pages/ProjectDetail'));
 const ProjectForm = lazy(() => import('../pages/ProjectForm'));
-// const TasksList = lazy(() => import('../components/TasksList'));
 const TaskForm = lazy(() => import('../pages/TaskForm'));
-const TestPage = lazy(() => import('../pages/TestPage'));
 
 const router = createBrowserRouter([
   {
@@ -59,14 +57,6 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: 'test',
-            element: (
-              <Suspense fallback={<div>Loading...</div>}>
-                <TestPage />
-              </Suspense>
-            )
-          },
-          {
             path: 'projects',
             element: (
               <Suspense fallback={<div>Loading...</div>}>
@@ -100,6 +90,14 @@ const router = createBrowserRouter([
           },
           {
             path: 'projects/:id/tasks/new',
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <TaskForm />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'projects/:id/tasks/:taskId/edit',
             element: (
               <Suspense fallback={<div>Loading...</div>}>
                 <TaskForm />

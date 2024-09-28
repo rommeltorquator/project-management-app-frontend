@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { formatDateToInput } from '../utils/dateUtils';
 
 import {
   Container,
@@ -47,7 +48,7 @@ const ProjectForm: React.FC = () => {
       const fetchProject = async () => {
         try {
           const response = await axiosInstance.get(`/projects/${id}`);
-          setFormData(response.data);
+          setFormData({ ...response.data, startDate: formatDateToInput(response.data.startDate), endDate: formatDateToInput(response.data.endDate)});
         } catch (err) {
           if (axios.isAxiosError(err)) {
             setError(err.response?.data?.message || 'Failed to fetch project data');
