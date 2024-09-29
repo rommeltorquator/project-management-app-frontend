@@ -62,6 +62,10 @@ const ProjectForm: React.FC = () => {
     }
   }, [id, isEditMode]);
 
+  const handleBack = () => {
+    navigate(-1);
+  };  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -182,6 +186,9 @@ const ProjectForm: React.FC = () => {
               sx={{ mt: 2 }}
             >
               {isEditMode ? 'Update Project' : 'Create Project'}
+            </Button>
+            <Button variant="text" onClick={handleBack} sx={{ alignSelf: 'flex-start', mt: 2 }}>
+              &larr; Back
             </Button>
           </Box>
         )}

@@ -58,6 +58,10 @@ const TaskForm: React.FC  = () => {
     }
   }, [isEditMode, taskId]);
 
+  const handleBack = () => {
+    navigate(-1);
+  };  
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
   ) => {
@@ -174,6 +178,9 @@ const TaskForm: React.FC  = () => {
               sx={{ mt: 2 }}
             >
               {isEditMode ? 'Update Task' : 'Create Task'}
+            </Button>
+            <Button variant="text" onClick={handleBack} sx={{ alignSelf: 'flex-start', mt: 2 }}>
+              &larr; Back
             </Button>
           </Box>
         )}
