@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import PublicRoute from '../components/PublicRoute';
+import TaskDetail from '../pages/TaskDetail';
 
 const Layout = lazy(() => import('../pages/Layout'));
 const Home = lazy(() => import('../pages/Home'));
@@ -85,6 +86,14 @@ const router = createBrowserRouter([
             element: (
               <Suspense fallback={<div>Loading...</div>}>
                 <ProjectForm />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'projects/:id/tasks/:taskId',
+            element: (
+              <Suspense fallback={<div>Loading...</div>}>
+                <TaskDetail />
               </Suspense>
             ),
           },

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
 import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
-import {Container, Box, Typography, Button, CircularProgress, Alert, List, ListItem, ListItemText, IconButton } from "@mui/material"
+import {Container, Box, Typography, Button, CircularProgress, Alert, List, ListItem, ListItemText, IconButton, Link } from "@mui/material"
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -165,9 +165,11 @@ const ProjectDetail: React.FC = () => {
           </Button>
           <Button variant="outlined" color="error" onClick={handleDeleteProject}>
             Delete Project
+          </Button>          
+          <Button variant="text" onClick={() => navigate('/projects')} sx={{ ml: 2 }}>
+            Back to Projects
           </Button>
-        </Box>
-        {/* Display Tasks */}
+        </Box>        
         {project.tasks && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h5" component="h2" gutterBottom>
@@ -188,7 +190,16 @@ const ProjectDetail: React.FC = () => {
                 {project.tasks.map((task) => (
                   <ListItem key={task._id} disableGutters>
                     <ListItemText
-                      primary={task.title}
+                      primary={
+                        <Link
+                          component={RouterLink}
+                          to={`/projects/${id}/tasks/${task._id}`}
+                          underline="hover"
+                          color="inherit"
+                        >
+                          {task.title}
+                        </Link>
+                      }
                       secondary={`Status: ${task.status}`}
                     />
                     <IconButton
