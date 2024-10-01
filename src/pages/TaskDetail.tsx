@@ -9,6 +9,11 @@ import {
   Button,
   CircularProgress,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -27,6 +32,10 @@ const TaskDetail: React.FC = () => {
   const [task, setTask] = useState<Task | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+  const [status, setStatus] = useState<Task['status']>('To Do');
+  const [statusUpdating, setStatusUpdating] = useState<boolean>(false);
+  const [statusError, setStatusError] = useState<string>('');
+  const [statusSuccess, setStatusSuccess] = useState<string>('');
 
   const handleEditTask = () => {
     navigate(`/projects/${id}/tasks/${taskId}/edit`);
@@ -65,6 +74,27 @@ const TaskDetail: React.FC = () => {
 
     fetchTask();
   }, [taskId]);
+
+  const handleStatusChange = async (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent) => {
+    const newStatus = event.target.value as Task['status'];
+    setStatus(newStatus);
+    setStatusUpdating(true);
+    setStatusError('');
+    setStatusSuccess('');
+
+    try {
+      await axiosInstance.put(`/tasks/${taskId}`, { status: newStatus });
+      setStatusSuccess('Status updated successfully');
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setStatusError(err.response?.data?.message || 'Failed to update status');
+      } else {
+        setStatusError('Failed to update status');
+      }
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -107,10 +137,41 @@ const TaskDetail: React.FC = () => {
             {task.description}
           </Typography>
         )}
-        <Typography variant="body2">Status: {task.status}</Typography>
-        <Typography variant="body2">Description: {task.description}</Typography>
+        {/* Status Select */}
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="status-label">Status</InputLabel>
+          <Select
+            labelId="status-label"
+            value={status}
+            label="Status"
+            onChange={handleStatusChange}
+            disabled={statusUpdating}
+          >
+            <MenuItem value="To Do">To Do</MenuItem>
+            <MenuItem value="In Progress">In Progress</MenuItem>
+            <MenuItem value="Completed">Completed</MenuItem>
+          </Select>
+        </FormControl>
+        {statusUpdating && (
+          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+            <CircularProgress size={20} />
+            <Typography variant="body2" sx={{ ml: 1 }}>
+              Updating status...
+            </Typography>
+          </Box>
+        )}
+        {statusError && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {statusError}
+          </Alert>
+        )}
+        {statusSuccess && (
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {statusSuccess}
+          </Alert>
+        )}
         {task.dueDate && (
-          <Typography variant="body2">
+          <Typography variant="body2" sx={{ mt: 2 }}>
             Due Date: {new Date(task.dueDate).toLocaleDateString()}
           </Typography>
         )}
