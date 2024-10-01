@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link as RouterLink } from 'react-router-dom';
 import axios from 'axios';
 import axiosInstance from '../api/axiosInstance';
-import {Container, Box, Typography, Button, CircularProgress, Alert, List, ListItem, ListItemText, IconButton, Link } from "@mui/material"
+import {Container, Box, Typography, Button, CircularProgress, Alert, IconButton, Link, Grid2 } from "@mui/material"
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -33,6 +33,10 @@ const ProjectDetail: React.FC = () => {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
+
+  const [todoTasks, setTodoTasks] = useState<Task[]>([]);
+  const [inProgressTasks, setInProgressTasks] = useState<Task[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<Task[]>([]);
 
   const handleEditProject = () => {
     navigate(`/projects/${id}/edit`);
@@ -85,6 +89,12 @@ const ProjectDetail: React.FC = () => {
         const tasksResponse = await axiosInstance.get(`/tasks/project/${id}`);
         projectData.tasks = tasksResponse.data;
 
+        // Group tasks by status
+        const tasks = projectData.tasks || [];
+        setTodoTasks(tasks.filter((task: { status: string; }) => task.status === 'To Do'));
+        setInProgressTasks(tasks.filter((task: { status: string; }) => task.status === 'In Progress'));
+        setCompletedTasks(tasks.filter((task: { status: string; }) => task.status === 'Completed'));
+
         setProject(projectData);
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -136,7 +146,7 @@ const ProjectDetail: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="lg">
       <Box sx={{ mt: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           {project.title}
@@ -169,7 +179,9 @@ const ProjectDetail: React.FC = () => {
           <Button variant="text" onClick={() => navigate('/projects')} sx={{ ml: 2 }}>
             Back to Projects
           </Button>
-        </Box>        
+        </Box>
+
+        {/* Display the tasks */}
         {project.tasks && (
           <Box sx={{ mt: 4 }}>
             <Typography variant="h5" component="h2" gutterBottom>
@@ -186,40 +198,127 @@ const ProjectDetail: React.FC = () => {
             {project.tasks.length === 0 ? (
               <Typography variant="body1">No tasks found.</Typography>
             ) : (
-              <List>
-                {project.tasks.map((task) => (
-                  <ListItem key={task._id} disableGutters>
-                    <ListItemText
-                      primary={
-                        <Link
-                          component={RouterLink}
-                          to={`/projects/${id}/tasks/${task._id}`}
-                          underline="hover"
-                          color="inherit"
-                        >
-                          {task.title}
-                        </Link>
-                      }
-                      secondary={`Status: ${task.status}`}
-                    />
-                    <IconButton
-                      edge="end"
-                      onClick={() =>
-                        navigate(`/projects/${id}/tasks/${task._id}/edit`)
-                      }
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      edge="end"
-                      color="error"
-                      onClick={() => handleDeleteTask(task._id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItem>
-                ))}
-              </List>
+              <Grid2 container spacing={2}>
+                {/* To Do Column */}
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <Box sx={{ backgroundColor: '#f0f0f0', p: 2, borderRadius: 1 }}>
+                    <Typography variant="h6" gutterBottom>
+                      To Do
+                    </Typography>
+                    {todoTasks.length === 0 ? (
+                      <Typography variant="body2">No tasks.</Typography>
+                    ) : (
+                      todoTasks.map((task) => (
+                        <Box key={task._id} sx={{ mb: 2 }}>
+                          <Link
+                            component={RouterLink}
+                            to={`/projects/${id}/tasks/${task._id}`}
+                            underline="hover"
+                            color="inherit"
+                          >
+                            {task.title}
+                          </Link>
+                          <IconButton
+                            edge="end"
+                            onClick={() =>
+                              navigate(`/projects/${id}/tasks/${task._id}/edit`)
+                            }
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            color="error"
+                            onClick={() => handleDeleteTask(task._id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      ))
+                    )}
+                  </Box>
+                </Grid2>
+
+                {/* In Progress Column */}
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <Box sx={{ backgroundColor: '#f0f0f0', p: 2, borderRadius: 1 }}>
+                    <Typography variant="h6" gutterBottom>
+                      In Progress
+                    </Typography>
+                    {inProgressTasks.length === 0 ? (
+                      <Typography variant="body2">No tasks.</Typography>
+                    ) : (
+                      inProgressTasks.map((task) => (
+                        <Box key={task._id} sx={{ mb: 2 }}>
+                          <Link
+                            component={RouterLink}
+                            to={`/projects/${id}/tasks/${task._id}`}
+                            underline="hover"
+                            color="inherit"
+                          >
+                            {task.title}
+                          </Link>
+                          <IconButton
+                            edge="end"
+                            onClick={() =>
+                              navigate(`/projects/${id}/tasks/${task._id}/edit`)
+                            }
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            color="error"
+                            onClick={() => handleDeleteTask(task._id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      ))
+                    )}
+                  </Box>
+                </Grid2>
+
+                {/* Completed Column */}
+                <Grid2 size={{ xs: 12, md: 4 }}>
+                  <Box sx={{ backgroundColor: '#f0f0f0', p: 2, borderRadius: 1 }}>
+                    <Typography variant="h6" gutterBottom>
+                      Completed
+                    </Typography>
+                    {completedTasks.length === 0 ? (
+                      <Typography variant="body2">No tasks.</Typography>
+                    ) : (
+                      completedTasks.map((task) => (
+                        <Box key={task._id} sx={{ mb: 2 }}>
+                          <Link
+                            component={RouterLink}
+                            to={`/projects/${id}/tasks/${task._id}`}
+                            underline="hover"
+                            color="inherit"
+                          >
+                            {task.title}
+                          </Link>
+                          <IconButton
+                            edge="end"
+                            onClick={() =>
+                              navigate(`/projects/${id}/tasks/${task._id}/edit`)
+                            }
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            edge="end"
+                            color="error"
+                            onClick={() => handleDeleteTask(task._id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      ))
+                    )}
+                  </Box>
+                </Grid2>
+              </Grid2>
             )}
           </Box>
         )}
